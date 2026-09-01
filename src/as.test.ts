@@ -94,6 +94,61 @@ describe("as", () => {
     })
   })
 
+  describe("Aggregate errors", () => {
+    test("Returns the target when the target is a match", () => {
+      class RetryableError extends Error {
+        isRetryable() {
+          return true
+        }
+      }
+
+      const target = new RetryableError()
+
+      const result = as(new AggregateError([target]), RetryableError)
+
+      expect(result).toBe(target)
+    })
+
+    test("Returns the first depth-first match from an aggregate's own list", () => {
+      class RetryableError extends Error {
+        isRetryable() {
+          return true
+        }
+      }
+
+      const targetOne = new RetryableError()
+      const targetTwo = new RetryableError()
+
+      const result = as(new AggregateError([
+        new Error('', { cause: targetOne }),
+        new Error('', { cause: targetTwo }),
+      ]), RetryableError)
+
+      expect(result).toBe(targetOne)
+    })
+
+    test("Prefers its own errors over cause", () => {
+      class RetryableError extends Error {
+        isRetryable() {
+          return true
+        }
+      }
+
+      const target = new RetryableError()
+      const cause = new RetryableError()
+
+      const input = new AggregateError([
+        new Error('', { cause: target }),
+      ])
+
+      input.cause = cause
+
+      const result = as(input, RetryableError)
+
+      expect(result).toBe(target)
+    })
+  })
+
   test("Won't continually parse the same error, overflowing the stack", () => {
     const predicateSpy = vi.fn()
 

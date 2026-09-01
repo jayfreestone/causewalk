@@ -5,7 +5,7 @@ type ErrorConstructor<T extends Error> = new (...args: any[]) => T
 type Matcher = (error: unknown) => boolean
 
 /**
- * Returns the first error in the chain that matches the given predicate, or `null` if none match.
+ * Returns the first error in the tree that matches the given predicate, or `null` if none match.
  */
 export function as<T>(
   error: Error,
@@ -13,7 +13,7 @@ export function as<T>(
 ): T | null
 
 /**
- * Returns the first error in the chain that is an instance of the given constructor, or `null` if none match. 
+ * Returns the first error in the tree that is an instance of the given constructor, or `null` if none match.
  */
 export function as<T extends Error>(
   error: Error,
@@ -21,7 +21,7 @@ export function as<T extends Error>(
 ): T | null
 
 export function as(error: Error, matcher: Guard<unknown> | ErrorConstructor<Error>): unknown {
-  let current: unknown = error
+  const pending: unknown[] = [error]
 
   // Prevent an infinite loop if one error is its own cause/there's a cycle.
   const visited = new Set<object>()
@@ -30,7 +30,9 @@ export function as(error: Error, matcher: Guard<unknown> | ErrorConstructor<Erro
     ? error => error instanceof matcher
     : matcher
 
-  while (true) {
+  while (pending.length > 0) {
+    const current = pending.pop()
+
     if (matches(current)) {
       return current
     }
@@ -38,15 +40,26 @@ export function as(error: Error, matcher: Guard<unknown> | ErrorConstructor<Erro
     if (
       typeof current !== "object" ||
       current === null ||
-      visited.has(current) ||
-      !("cause" in current)
+      visited.has(current)
     ) {
-      return null
+      continue
     }
 
     visited.add(current)
-    current = current.cause
+
+    // Push the cause first so aggregate members are visited first by the LIFO stack.
+    if ("cause" in current) {
+      pending.push(current.cause)
+    }
+
+    if (current instanceof AggregateError) {
+      for (let index = current.errors.length - 1; index >= 0; index--) {
+        pending.push(current.errors[index])
+      }
+    }
   }
+
+  return null
 }
 
 function isErrorConstructor(
