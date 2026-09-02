@@ -1,5 +1,5 @@
-import { describe, test, expect, expectTypeOf, vi } from "vitest" 
-import { as } from './as'
+import { describe, test, expect, expectTypeOf, vi } from "vitest"
+import { as } from "./as"
 
 describe("as", () => {
   describe("When the target is an error constructor", () => {
@@ -26,7 +26,7 @@ describe("as", () => {
 
       const target = new RetryableError()
 
-      const result = as(new Error('', { cause: target }), RetryableError)
+      const result = as(new Error("", { cause: target }), RetryableError)
 
       expect(result).toBe(target)
     })
@@ -78,7 +78,7 @@ describe("as", () => {
 
       const target = new RetryableError()
 
-      const result = as(new Error('', { cause: target }), isRetryable)
+      const result = as(new Error("", { cause: target }), isRetryable)
 
       expect(result).toBe(target)
     })
@@ -88,7 +88,7 @@ describe("as", () => {
         return typeof type === "object" && type !== null && "isRetryable" in type
       }
 
-      const result = as(new Error(''), isRetryable)
+      const result = as(new Error(""), isRetryable)
 
       expectTypeOf(result).toEqualTypeOf<{ isRetryable(): boolean } | null>()
     })
@@ -119,10 +119,13 @@ describe("as", () => {
       const targetOne = new RetryableError()
       const targetTwo = new RetryableError()
 
-      const result = as(new AggregateError([
-        new Error('', { cause: targetOne }),
-        new Error('', { cause: targetTwo }),
-      ]), RetryableError)
+      const result = as(
+        new AggregateError([
+          new Error("", { cause: targetOne }),
+          new Error("", { cause: targetTwo }),
+        ]),
+        RetryableError,
+      )
 
       expect(result).toBe(targetOne)
     })
@@ -137,9 +140,7 @@ describe("as", () => {
       const target = new RetryableError()
       const cause = new RetryableError()
 
-      const input = new AggregateError([
-        new Error('', { cause: target }),
-      ])
+      const input = new AggregateError([new Error("", { cause: target })])
 
       input.cause = cause
 

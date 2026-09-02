@@ -64,10 +64,7 @@ describe("all", () => {
     const shared = new RetryableError("shared")
     shared.cause = shared
 
-    const input = new AggregateError([
-      shared,
-      new Error("wrapper", { cause: shared }),
-    ])
+    const input = new AggregateError([shared, new Error("wrapper", { cause: shared })])
 
     input.cause = shared
 

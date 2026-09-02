@@ -12,7 +12,7 @@ JavaScript already has great support for error wrapping/chaining via `Error.caus
 try {
   throw new Error()
 } catch (cause) {
-  throw new Error('Oh no!', { cause })
+  throw new Error("Oh no!", { cause })
 }
 ```
 
@@ -44,7 +44,7 @@ npm install causewalk
 Walks the error chain looking for the closest match. Pass it an error constructor:
 
 ```ts
-import { as } from 'causewalk'
+import { as } from "causewalk"
 
 class RetryableError extends Error {
   isRetryable() {
@@ -52,8 +52,8 @@ class RetryableError extends Error {
   }
 }
 
-const error = new Error('Could not fetch results', {
-  cause: new RetryableError('Oh no'),
+const error = new Error("Could not fetch results", {
+  cause: new RetryableError("Oh no"),
 })
 
 // `RetryableError` | null
@@ -65,10 +65,7 @@ Or a type predicate, if you're looking for something a little more specific:
 ```ts
 function hasCode(error: unknown): error is { code: string } {
   return (
-    typeof error === 'object' &&
-    error !== null &&
-    'code' in error &&
-    typeof error.code === 'string'
+    typeof error === "object" && error !== null && "code" in error && typeof error.code === "string"
   )
 }
 
@@ -83,13 +80,13 @@ Returns `null` when there isn't a match.
 Checks whether a particular error exists anywhere in the error chain:
 
 ```ts
-import { is } from 'causewalk'
+import { is } from "causewalk"
 
-const timeout = new Error('Timed out')
-const error = new Error('Could not fetch results', { cause: timeout })
+const timeout = new Error("Timed out")
+const error = new Error("Could not fetch results", { cause: timeout })
 
 is(error, timeout) // true
-is(error, new Error('Timed out')) // false
+is(error, new Error("Timed out")) // false
 ```
 
 Errors are compared by identity, not their type or contents. If you want to check for a type of error, use `as` instead.
@@ -99,12 +96,12 @@ Errors are compared by identity, not their type or contents. If you want to chec
 Works like `as`, but returns every match in the error chain:
 
 ```ts
-import { all } from 'causewalk'
+import { all } from "causewalk"
 
 const error = new AggregateError([
-  new TypeError('First'),
-  new Error('Something else'),
-  new TypeError('Second'),
+  new TypeError("First"),
+  new Error("Something else"),
+  new TypeError("Second"),
 ])
 
 // `TypeError[]`
@@ -120,8 +117,8 @@ Most of the time, an error and its `cause` form a straight line and there's only
 The error you pass in is checked first:
 
 ```ts
-const inner = new TypeError('Inner')
-const outer = new TypeError('Outer', { cause: inner })
+const inner = new TypeError("Inner")
+const outer = new TypeError("Outer", { cause: inner })
 
 as(outer, TypeError) // outer
 all(outer, TypeError) // [outer, inner]
@@ -130,14 +127,15 @@ all(outer, TypeError) // [outer, inner]
 An `AggregateError`'s errors are searched in their original order, before its `cause`:
 
 ```ts
-const first = new TypeError('First')
-const second = new TypeError('Second')
-const cause = new TypeError('Cause')
+const first = new TypeError("First")
+const second = new TypeError("Second")
+const cause = new TypeError("Cause")
 
-const error = new AggregateError([
-  new Error('First wrapper', { cause: first }),
-  second,
-], 'Everything failed', { cause })
+const error = new AggregateError(
+  [new Error("First wrapper", { cause: first }), second],
+  "Everything failed",
+  { cause },
+)
 
 as(error, TypeError) // first
 all(error, TypeError) // [first, second, cause]
@@ -146,13 +144,9 @@ all(error, TypeError) // [first, second, cause]
 For a `SuppressedError`, the newer `error` is searched before the older `suppressed` error:
 
 ```ts
-const applicationError = new TypeError('Application failed')
-const cleanupError = new TypeError('Cleanup failed')
-const error = new SuppressedError(
-  cleanupError,
-  applicationError,
-  'Cleanup also failed',
-)
+const applicationError = new TypeError("Application failed")
+const cleanupError = new TypeError("Cleanup failed")
+const error = new SuppressedError(cleanupError, applicationError, "Cleanup also failed")
 
 as(error, TypeError) // cleanupError
 all(error, TypeError) // [cleanupError, applicationError]

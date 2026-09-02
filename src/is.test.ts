@@ -33,10 +33,7 @@ describe("is", () => {
 
   test("searches aggregate errors", () => {
     const target = new Error("target")
-    const error = new AggregateError([
-      new Error("first"),
-      new Error("second", { cause: target }),
-    ])
+    const error = new AggregateError([new Error("first"), new Error("second", { cause: target })])
 
     expect(is(error, target)).toBe(true)
   })

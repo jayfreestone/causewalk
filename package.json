@@ -1,28 +1,32 @@
 {
   "name": "causewalk",
-  "type": "module",
   "version": "0.1.0",
   "description": "A minimal set of Go-inspired utilities for handling error wrapping in TypeScript",
-  "author": "Jay Freestone <mail@jayfreestone.com>",
-  "license": "MIT",
   "homepage": "https://www.npmjs.com/package/causewalk",
+  "bugs": {
+    "url": "https://github.com/jayfreestone/causewalk/issues"
+  },
+  "license": "MIT",
+  "author": "Jay Freestone <mail@jayfreestone.com>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jayfreestone/causewalk.git"
   },
-  "bugs": {
-    "url": "https://github.com/jayfreestone/causewalk/issues"
-  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
   "exports": {
     ".": "./dist/index.mjs",
     "./package.json": "./package.json"
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
     "release": "bumpp",
@@ -31,6 +35,8 @@
   "devDependencies": {
     "@types/node": "^26.1.1",
     "bumpp": "^11.1.0",
+    "oxfmt": "^0.66.0",
+    "oxlint": "^1.81.0",
     "tsdown": "^0.22.5",
     "typescript": "^7.0.2",
     "vitest": "^4.1.10"

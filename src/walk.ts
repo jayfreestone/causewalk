@@ -43,7 +43,7 @@ export function* walk(error: Error): Generator<unknown> {
 /**
  * Talks and walks like a `SuppressedError`.
  * Duck-typed since it's not baseline available and not in Node yet.
- * 
+ *
  * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SuppressedError
  */
 interface SuppressedErrorLike {
@@ -54,9 +54,6 @@ interface SuppressedErrorLike {
 
 function isSuppressedErrorLike(error: object): error is SuppressedErrorLike {
   return (
-    "name" in error &&
-    error.name === "SuppressedError" &&
-    "error" in error &&
-    "suppressed" in error
+    "name" in error && error.name === "SuppressedError" && "error" in error && "suppressed" in error
   )
 }
