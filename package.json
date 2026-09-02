@@ -1,17 +1,17 @@
 {
-  "name": "causeway",
+  "name": "causewalk",
   "type": "module",
-  "version": "0.0.0",
-  "description": "A minimal set of Go-inspired error utilities for TypeScript",
+  "version": "0.1.0",
+  "description": "A minimal set of Go-inspired utilities for handling error wrapping in TypeScript",
   "author": "Jay Freestone <mail@jayfreestone.com>",
   "license": "MIT",
-  "homepage": "https://github.com/author/library#readme",
+  "homepage": "https://www.npmjs.com/package/causewalk",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/author/library.git"
+    "url": "git+https://github.com/jayfreestone/causewalk.git"
   },
   "bugs": {
-    "url": "https://github.com/author/library/issues"
+    "url": "https://github.com/jayfreestone/causewalk/issues"
   },
   "exports": {
     ".": "./dist/index.mjs",
