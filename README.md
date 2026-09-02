@@ -153,3 +153,13 @@ all(error, TypeError) // [cleanupError, applicationError]
 ```
 
 Error chains can contain the same error more than once, or even contain cycles. Each object is only visited once, so these won't duplicate results or loop forever.
+
+## Can we have...
+
+If it's already ergonomic in vanilla JS, `causewalk` has no desire to reimplement it. Dedicated error libraries with custom types provide very fluent helpers like `myErr.wrap('Additional Context')`. Causewalk doesn't: it works with native errors, and doesn't try to extend the built-ins.
+
+Here are a few examples which are tempting but would absolutely nothing:
+
+- `unwrap`: It's just `error.cause`.
+- `join`: It's just `AggregateError`.
+- `wrap`: It's just `new Error('Outer', { cause: new Error('Inner' )})`
