@@ -1,7 +1,7 @@
 # `causewalk`
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/jayfreestone/causewalk/main/banner.jpg" alt="causewalk">
+  <img src="./banner.jpg" alt="causewalk">
 </p>
 
 A dead-simple library for traversing native JavaScript errors.
