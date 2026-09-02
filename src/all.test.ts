@@ -83,4 +83,28 @@ describe("all", () => {
 
     expect(all(input, isString)).toEqual(["retry", "retry"])
   })
+
+  test("returns suppressed errors from newest to oldest", () => {
+    class RetryableError extends Error {}
+
+    const applicationError = new RetryableError("application failed")
+    const firstCleanupError = new RetryableError("first cleanup failed")
+    const secondCleanupError = new RetryableError("second cleanup failed")
+    const firstSuppression = Object.assign(new Error("suppressed error"), {
+      name: "SuppressedError",
+      error: firstCleanupError,
+      suppressed: applicationError,
+    })
+    const input = Object.assign(new Error("suppressed error"), {
+      name: "SuppressedError",
+      error: secondCleanupError,
+      suppressed: firstSuppression,
+    })
+
+    expect(all(input, RetryableError)).toEqual([
+      secondCleanupError,
+      firstCleanupError,
+      applicationError,
+    ])
+  })
 })

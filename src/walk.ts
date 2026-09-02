@@ -31,5 +31,32 @@ export function* walk(error: Error): Generator<unknown> {
         pending.push(current.errors[index])
       }
     }
+
+    // Push the suppressed error first so the newer error is visited first.
+    if (isSuppressedErrorLike(current)) {
+      pending.push(current.suppressed)
+      pending.push(current.error)
+    }
   }
+}
+
+/**
+ * Talks and walks like a `SuppressedError`.
+ * Duck-typed since it's not baseline available and not in Node yet.
+ * 
+ * @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SuppressedError
+ */
+interface SuppressedErrorLike {
+  name: "SuppressedError"
+  error: unknown
+  suppressed: unknown
+}
+
+function isSuppressedErrorLike(error: object): error is SuppressedErrorLike {
+  return (
+    "name" in error &&
+    error.name === "SuppressedError" &&
+    "error" in error &&
+    "suppressed" in error
+  )
 }

@@ -41,6 +41,17 @@ describe("is", () => {
     expect(is(error, target)).toBe(true)
   })
 
+  test("searches suppressed errors", () => {
+    const target = new Error("cleanup failed")
+    const error = Object.assign(new Error("both operations failed"), {
+      name: "SuppressedError",
+      error: target,
+      suppressed: new Error("application failed"),
+    })
+
+    expect(is(error, target)).toBe(true)
+  })
+
   test("handles cycles in the error tree", () => {
     const first = new Error("first")
     const second = new Error("second", { cause: first })

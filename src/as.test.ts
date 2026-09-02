@@ -149,6 +149,19 @@ describe("as", () => {
     })
   })
 
+  test("Finds a match in a suppressed error", () => {
+    class RetryableError extends Error {}
+
+    const applicationError = new RetryableError("application failed")
+    const input = Object.assign(new Error("both operations failed"), {
+      name: "SuppressedError",
+      error: new Error("cleanup failed"),
+      suppressed: applicationError,
+    })
+
+    expect(as(input, RetryableError)).toBe(applicationError)
+  })
+
   test("Examines an error once when the tree contains a cycle", () => {
     const predicateSpy = vi.fn()
 
