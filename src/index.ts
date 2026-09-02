@@ -1,3 +1,3 @@
-export function fn() {
-  return 'Hello, tsdown!'
-}
+export { all } from "./all"
+export { as } from "./as"
+export { is } from "./is"

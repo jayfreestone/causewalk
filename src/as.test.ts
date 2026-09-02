@@ -149,7 +149,7 @@ describe("as", () => {
     })
   })
 
-  test("Won't continually parse the same error, overflowing the stack", () => {
+  test("Examines an error once when the tree contains a cycle", () => {
     const predicateSpy = vi.fn()
 
     function isRetryable(_type: unknown): _type is { isRetryable(): boolean } {
@@ -162,7 +162,6 @@ describe("as", () => {
 
     as(target, isRetryable)
 
-    // If we don't handle this then we'll stack overflow rather than reach here, but included for completeness.
-    expect(predicateSpy).toHaveBeenCalledTimes(2)
+    expect(predicateSpy).toHaveBeenCalledTimes(1)
   })
 })

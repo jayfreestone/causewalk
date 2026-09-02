@@ -1,6 +1,4 @@
-type Matcher<T> = (error: unknown) => error is T
-
-export function walk<T>(error: Error, matches: Matcher<T>): T | null {
+export function* walk(error: Error): Generator<unknown> {
   const pending: unknown[] = [error]
 
   // Prevent an infinite loop if one error is its own cause/there's a cycle.
@@ -9,19 +7,19 @@ export function walk<T>(error: Error, matches: Matcher<T>): T | null {
   while (pending.length > 0) {
     const current = pending.pop()
 
-    if (matches(current)) {
-      return current
+    if (typeof current === "object" && current !== null) {
+      if (visited.has(current)) {
+        continue
+      }
+
+      visited.add(current)
     }
 
-    if (
-      typeof current !== "object" ||
-      current === null ||
-      visited.has(current)
-    ) {
+    yield current
+
+    if (typeof current !== "object" || current === null) {
       continue
     }
-
-    visited.add(current)
 
     // Push the cause first so aggregate members are visited first by the LIFO stack.
     if ("cause" in current) {
@@ -34,6 +32,4 @@ export function walk<T>(error: Error, matches: Matcher<T>): T | null {
       }
     }
   }
-
-  return null
 }
