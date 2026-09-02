@@ -24,12 +24,48 @@ Instead, `causewalk` provides three tiny utility functions: `as`/`is`/`all`.
 - Small and unopinionated.
 - Works with `AggregateError` and `SuppressedError`.
 
+## A real-world example
+
+Imagine a payment SDK throws a `CardDeclinedError`. The checkout service adds useful context before letting the error bubble up:
+
+```ts
+async function checkout(order: Order) {
+  try {
+    await payments.charge(order)
+  } catch (cause) {
+    throw new Error(`Checkout failed for order ${order.id}`, { cause })
+  }
+}
+```
+
+At the edge of the application, you need to turn that failure into the right response. `causewalk` finds the original error without discarding the context added along the way:
+
+```ts
+import { as } from "causewalk"
+import { CardDeclinedError } from "./payments"
+
+try {
+  await checkout(order)
+  return response.status(204).send()
+} catch (error) {
+  const declined = as(error, CardDeclinedError)
+
+  if (declined) {
+    return response.status(402).send({ message: declined.message })
+  }
+
+  throw error
+}
+```
+
+The same pattern works when deciding whether to retry a job, what to log, or how to report a failure.
+
 > [!NOTE]
 > **When would I use this?**
 >
 > If you're already using a rich/custom error library, `causewalk` probably isn't for you. It's designed as a simple set of utilities over native error wrapping.
 >
-> The second you need to care about what "type" an error is, for instance a consumer deciding if an operation should be retried, or what status code to send when an error bubbles up to a route handler, `causewalk` lets you do this easily without sacrificing the rich additional context that native error wrapping enables.
+> The second you need to care about what "type" an error is, `causewalk` lets you inspect the full chain without sacrificing the rich additional context that native error wrapping enables.
 
 ## Installation
 
