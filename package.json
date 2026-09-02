@@ -22,6 +22,7 @@
   },
   "scripts": {
     "build": "tsdown",
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm test -- --run",
     "dev": "tsdown --watch",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
@@ -30,7 +31,7 @@
     "test": "vitest",
     "typecheck": "tsc --noEmit",
     "release": "bumpp",
-    "prepublishOnly": "pnpm run build"
+    "prepublishOnly": "npm run check && npm run build"
   },
   "devDependencies": {
     "@types/node": "^26.1.1",
