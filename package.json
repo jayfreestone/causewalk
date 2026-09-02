@@ -1,6 +1,6 @@
 {
   "name": "causewalk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A minimal set of Go-inspired utilities for handling error wrapping in TypeScript",
   "homepage": "https://www.npmjs.com/package/causewalk",
   "bugs": {
